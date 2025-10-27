@@ -6,10 +6,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.backend.dto.EmployeeRequestDTO;
 import com.example.backend.model.Employee;
 import com.example.backend.service.EmployeeService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -41,10 +44,22 @@ public class EmployeeController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
-    public ResponseEntity<Employee> create(@RequestBody Employee employee) {
-        Employee created = employeeService.addEmployee(employee);
-        return ResponseEntity.ok(created);
-    }
+    public ResponseEntity<?> addEmployee(@RequestBody EmployeeRequestDTO dto) {
+    Employee employee = new Employee();
+    employee.setFirstName(dto.getFirstName());
+    employee.setLastName(dto.getLastName());
+    employee.setEmail(dto.getEmail());
+    employee.setPhone(dto.getPhone());
+    employee.setDepartment(dto.getDepartment());
+    employee.setDesignation(dto.getDesignation());
+    employee.setSalary(dto.getSalary());
+    employee.setDateOfJoining(dto.getDateOfJoining());
+    employee.setStatus(dto.isStatus());
+
+    Employee created = employeeService.addEmployee(employee, dto.getUserId(), dto.getManagerId());
+    return ResponseEntity.ok(created);
+}
+
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @PutMapping("/{id}")
@@ -62,5 +77,20 @@ public class EmployeeController {
     public ResponseEntity<Void> delete(@PathVariable int id) {
         employeeService.deleteEmployee(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/subordinates")
+    public ResponseEntity<?> getSubordinates(Authentication auth) {
+        try {
+            List<Employee> subordinates = employeeService.getSubordinates(auth);
+            if (subordinates.isEmpty()) {
+                return ResponseEntity.ok("No subordinates found for this manager.");
+            }
+            return ResponseEntity.ok(subordinates);
+        } catch (SecurityException e) {
+            return ResponseEntity.status(403).body("Access denied: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
     }
 }

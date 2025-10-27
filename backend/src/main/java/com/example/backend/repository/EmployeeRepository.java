@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.example.backend.model.Employee;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
@@ -21,7 +22,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     List<Employee> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrDepartmentContainingIgnoreCaseOrDesignationContainingIgnoreCase(
             String firstName, String lastName, String department, String designation
     );
-
     List<Employee> findAllByOrderByFirstNameAsc();
     List<Employee> findAllByOrderByFirstNameDesc();
+    List<Employee> findByManager(Employee manager);
+    Optional<Employee> findByUserUsername(String username);
+
 }

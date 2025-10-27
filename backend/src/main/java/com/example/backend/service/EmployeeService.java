@@ -34,18 +34,20 @@ public class EmployeeService {
                 .filter(emp -> isAuthorized(auth, emp));
     }
 
-    public Employee addEmployee(Employee employee) {
-    // when user is provided, auto populate entity from DB
-    if (employee.getUser() != null && employee.getUser().getUserId() != 0) {
-        int userId = employee.getUser().getUserId();
+   public Employee addEmployee(Employee employee, Integer userId, Integer managerId) {
+    // Attach user
+    if (userId != null) {
         userRepository.findById(userId).ifPresent(employee::setUser);
+    }
+
+    // Attach manager
+    if (managerId != null) {
+        employeeRepository.findById(managerId).ifPresent(employee::setManager);
     }
 
     employee.setStatus(true);
     return employeeRepository.saveAndFlush(employee);
 }
-
-
     public Employee updateEmployeeIfAuthorized(int id, Employee updatedEmployee, Authentication auth) {
         return employeeRepository.findById(id)
                 .map(existing -> {
@@ -60,7 +62,7 @@ public class EmployeeService {
                     existing.setDesignation(updatedEmployee.getDesignation());
                     existing.setSalary(updatedEmployee.getSalary());
                     existing.setDateOfJoining(updatedEmployee.getDateOfJoining());
-                    existing.setManagerName(updatedEmployee.getManagerName());
+                    existing.setManager(updatedEmployee.getManager());
                     existing.setStatus(updatedEmployee.getStatus());
                     return employeeRepository.saveAndFlush(existing);
                 })
@@ -95,7 +97,23 @@ public class EmployeeService {
         if (auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
             return emp.getUser() != null && emp.getUser().getUsername().equals(auth.getName());
         }
+          
+        
+        if (auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_MANAGER"))) {
+            return employeeRepository.findByUserUsername(auth.getName())
+                    .map(manager -> emp.getManager() != null && emp.getManager().getEmployeeId() == manager.getEmployeeId())
+                    .orElse(false);
+        }
         return false;
     }
+
+    public List<Employee> getSubordinates(Authentication auth) {
+    // Find  logged-in manager Employee record
+    Employee manager = employeeRepository.findByUserUsername(auth.getName())
+            .orElseThrow(() -> new RuntimeException("Manager record not found"));
+
+    return employeeRepository.findByManager(manager);
+}
+
 
 }

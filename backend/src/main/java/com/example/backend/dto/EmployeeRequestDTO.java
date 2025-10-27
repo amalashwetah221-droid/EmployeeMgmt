@@ -1,16 +1,9 @@
-package com.example.backend.model;
+package com.example.backend.dto;
 
-import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
-@Entity
-@Table(name="Employees")
-public class Employee {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int employeeId;
-
+public class EmployeeRequestDTO {
     private String firstName;
     private String lastName;
     private String email;
@@ -19,20 +12,11 @@ public class Employee {
     private String designation;
     private Double salary;
     private LocalDate dateOfJoining;
-    private boolean status; // active(1) or inactive(0)
+    private boolean status;
+    private Integer userId;     // for linking User
+    private Integer managerId;  // for linking Manager
 
-    @OneToOne
-    @JoinColumn(name = "user_id", unique = true)
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "manager_id")
-    private Employee manager;
-
-    // Getters & Setters
-    public int getEmployeeId() { return employeeId; }
-    public void setEmployeeId(int employeeId) { this.employeeId = employeeId; }
-
+    // Getters and Setters
     public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) { this.firstName = firstName; }
 
@@ -57,13 +41,12 @@ public class Employee {
     public LocalDate getDateOfJoining() { return dateOfJoining; }
     public void setDateOfJoining(LocalDate dateOfJoining) { this.dateOfJoining = dateOfJoining; }
 
-    public boolean getStatus() { return status; }
+    public boolean isStatus() { return status; }
     public void setStatus(boolean status) { this.status = status; }
 
-    public Employee getManager() { return manager; }
-    public void setManager(Employee manager) { this.manager = manager; }
+    public Integer getUserId() { return userId; }
+    public void setUserId(Integer userId) { this.userId = userId; }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public Integer getManagerId() { return managerId; }
+    public void setManagerId(Integer managerId) { this.managerId = managerId; }
 }
-
