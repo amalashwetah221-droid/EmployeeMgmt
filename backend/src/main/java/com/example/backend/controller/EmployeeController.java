@@ -18,14 +18,14 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
-    // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<List<Employee>> list(@RequestParam(value = "q", required = false) String q) {
         List<Employee> results = employeeService.searchEmployees(q);
         return ResponseEntity.ok(results);
     }
 
-    // @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/{id}")
     public ResponseEntity<Employee> get(@PathVariable int id,  Authentication authentication) {
         return employeeService.getEmployeeIfAuthorized(id, authentication)
@@ -33,20 +33,20 @@ public class EmployeeController {
                 .orElseGet(() -> ResponseEntity.status(403).build());
     }
 
-    // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/sort")
     public List<Employee> sortEmployees(@RequestParam(defaultValue = "asc") String order) {
         return employeeService.getEmployeesSorted(order);
     }
 
-    // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<Employee> create(@RequestBody Employee employee) {
         Employee created = employeeService.addEmployee(employee);
         return ResponseEntity.ok(created);
     }
 
-    // @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @PutMapping("/{id}")
     public ResponseEntity<Employee> update(@PathVariable int id, @RequestBody Employee employee, Authentication authentication) {
         try {

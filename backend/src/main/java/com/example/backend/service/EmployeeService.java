@@ -89,10 +89,10 @@ public class EmployeeService {
     }
     
     private boolean isAuthorized(Authentication auth, Employee emp) {
-        if (auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN"))) {
+        if (auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             return true;
         }
-        if (auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("USER"))) {
+        if (auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
             return emp.getUser() != null && emp.getUser().getUsername().equals(auth.getName());
         }
         return false;
