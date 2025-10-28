@@ -1,0 +1,80 @@
+<div class="p-6 bg-gray-50 min-h-screen">
+  <h2 class="text-3xl font-bold text-blue-700 mb-4">Employee Directory</h2>
+
+  <div class="flex justify-between items-center mb-4">
+    <mat-form-field appearance="outline" class="w-1/3">
+      <mat-label>Search Employee</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Search by name, department..." />
+    </mat-form-field>
+    <button mat-flat-button color="primary" class="bg-green-600 hover:bg-green-700 text-white">
+      Add Employee
+    </button>
+  </div>
+
+  <div class="bg-white shadow-lg rounded-xl overflow-hidden">
+    <table mat-table [dataSource]="dataSource" matSort class="min-w-full">
+      <!-- ID -->
+      <ng-container matColumnDef="employeeId">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+        <td mat-cell *matCellDef="let element">{{ element.employeeId }}</td>
+      </ng-container>
+
+      <!-- Name -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+        <td mat-cell *matCellDef="let element">{{ element.firstName }} {{ element.lastName }}</td>
+      </ng-container>
+
+      <!-- Email -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let element">{{ element.email }}</td>
+      </ng-container>
+
+      <!-- Department -->
+      <ng-container matColumnDef="department">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Department</th>
+        <td mat-cell *matCellDef="let element">{{ element.department }}</td>
+      </ng-container>
+
+      <!-- Designation -->
+      <ng-container matColumnDef="designation">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Designation</th>
+        <td mat-cell *matCellDef="let element">{{ element.designation }}</td>
+      </ng-container>
+
+      <!-- Salary -->
+      <ng-container matColumnDef="salary">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Salary</th>
+        <td mat-cell *matCellDef="let element">₹{{ element.salary | number }}</td>
+      </ng-container>
+
+      <!-- Actions -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button color="primary" (click)="viewEmployee(element)">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button color="accent" (click)="editEmployee(element)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteEmployee(element)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+  </div>
+
+  <!-- Chart Section -->
+  <div class="mt-8 bg-white shadow-md rounded-xl p-6">
+    <h3 class="text-xl font-semibold text-green-700 mb-4">Salary Insights</h3>
+    <canvas baseChart [data]="chartData" [options]="chartOptions" chartType="bar"></canvas>
+  </div>
+</div>

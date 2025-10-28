@@ -1,0 +1,17 @@
+.table-container {
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background: white;
+  margin: 1rem;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+mat-form-field {
+  width: 250px;
+}

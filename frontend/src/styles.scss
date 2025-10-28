@@ -1,0 +1,35 @@
+@use '@angular/material' as mat;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+
+:root {
+--brand-blue: #0f62fe;
+--brand-green: #2aa876;
+--bg: #f6fbfa;
+}
+
+
+body {
+font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+margin: 0;
+background: var(--bg);
+color: #102a43;
+}
+
+
+.mat-toolbar.mat-primary {
+background: linear-gradient(90deg, var(--brand-blue), var(--brand-green));
+color: white;
+}
+
+
+.container { padding: 16px; }
+.card { background: white; border-radius: 12px; padding: 16px; box-shadow: 0 6px 20px rgba(2,6,23,0.06);}
+
+
+button.mat-flat-button { background: linear-gradient(90deg, var(--brand-blue), var(--brand-green)); color: white; }
+
+
+@media (max-width: 720px) {
+.sidenav { display:none !important; }
+}
