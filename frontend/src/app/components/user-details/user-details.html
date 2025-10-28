@@ -1,0 +1,15 @@
+<div class="user-details-container">
+      <div *ngIf="employee">
+        <h3>Employee Details</h3>
+        <p><b>Username:</b> {{ userDetails?.username || userDetails?.sub }}</p>
+        <p><b>First Name:</b> {{ employee.firstName }}</p>
+        <p><b>Last Name:</b> {{ employee.lastName }}</p>
+        <p><b>Department:</b> {{ employee.department }}</p>
+        <p><b>Designation:</b> {{ employee.designation }}</p>
+        <p><b>Date of Joining:</b> {{ employee.dateOfJoining | date }}</p>
+        <p><b>Salary:</b> {{ employee.salary | currency:'INR' }}</p>
+        <p><b>Status:</b> {{ employee.status ? 'Active' : 'Inactive' }}</p>
+      </div>
+
+      <p *ngIf="!employee">Loading employee data...</p>
+    </div>

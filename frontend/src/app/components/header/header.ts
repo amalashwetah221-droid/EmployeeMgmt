@@ -12,10 +12,15 @@ import { Router } from '@angular/router';
   styleUrls: ['./header.scss'],
 })
 export class Header {
-    private auth = inject(AuthService);
-    private router = inject(Router);
+  private auth = inject(AuthService);
+  private router = inject(Router);
+
   logout() {
     this.auth.logout();
     this.router.navigate(['/login']);
+  }
+
+  goToUserDetails() {
+    this.router.navigate(['/user-details']);
   }
 }

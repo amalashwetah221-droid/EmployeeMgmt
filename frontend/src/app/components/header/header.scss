@@ -1,16 +1,30 @@
-.mat-toolbar {
-  flex-wrap: wrap;
-  min-height: 56px;
-  box-sizing: border-box;
-}
-@media (max-width: 600px) {
-  .mat-toolbar {
-    padding: 0 4px;
-    font-size: 0.97rem;
-    min-height: 44px;
+.header-icon {
+  margin-left: 8px;
+  background: linear-gradient(135deg, #f4f8fb 60%, #deeefe 100%);
+  border-radius: 50%;
+  border: 2px solid #2186eb;
+  box-shadow: 0 1.5px 5px 0 rgba(33,134,235,0.09);
+  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover, &:focus {
+    background: linear-gradient(135deg, #cbe7fd 60%, #aedafe 100%);
+    box-shadow: 0 4px 12px rgba(33,134,235,0.2);
+    transform: translateY(-1.5px) scale(1.08);
+    border-color: #1761a0;
+  }
+
+  mat-icon {
+    font-size: 26px;
+    color: #1761a0;
   }
 }
 
+// Existing .mat-toolbar rules unchanged
 .mat-toolbar {
   flex-wrap: wrap;
   min-height: 56px;
@@ -25,4 +39,3 @@
     min-height: 44px;
   }
 }
-

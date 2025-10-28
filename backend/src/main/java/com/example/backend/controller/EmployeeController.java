@@ -37,7 +37,7 @@ public class EmployeeController {
     @Autowired
     private RoleRepository roleRepository;
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
     @GetMapping
     public ResponseEntity<List<Employee>> list(@RequestParam(value = "q", required = false) String q) {
         List<Employee> results = employeeService.searchEmployees(q);

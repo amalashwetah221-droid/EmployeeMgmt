@@ -62,6 +62,8 @@
   <mat-checkbox formControlName="status" color="primary">
     Active Status
   </mat-checkbox>
+    <button mat-flat-button class="add-btn" type="submit">
+      {{ editMode ? 'Update' : 'Add' }}
+    </button>
 
-  <button mat-flat-button color="primary">{{ editMode ? 'Update' : 'Add' }}</button>
 </form>

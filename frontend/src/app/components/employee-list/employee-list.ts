@@ -89,10 +89,11 @@ export class EmployeeList implements OnInit, AfterViewInit {
     });
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    this.dataSource.filter = filterValue;
-  }
+ applyFilter(event: Event) {
+  const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+  this.loadEmployees(filterValue);  
+}
+
 
   updateChart(employees: Employee[]) {
     const salaryMap: Record<string, number[]> = {};
@@ -172,15 +173,16 @@ deleteEmployee(emp: Employee) {
       data: emp
     });
   }
-   loadEmployees() {
-    this.employeeService.getEmployees().subscribe({
-      next: (employees) => {
-        this.dataSource.data = employees;
-        this.updateChart(employees);
-      },
-      error: (error) => {
-        console.error('Error fetching employees:', error);
-      }
-    });
-  }
+   loadEmployees(query: string = '') {
+  this.employeeService.searchEmployees(query).subscribe({
+    next: (employees) => {
+      this.dataSource.data = employees;
+      this.updateChart(employees);
+    },
+    error: (error) => {
+      console.error('Error fetching employees:', error);
+    }
+  });
+}
+
 }

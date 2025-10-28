@@ -4,12 +4,16 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.example.backend.model.Employee;
 import com.example.backend.model.User;
+import com.example.backend.repository.EmployeeRepository;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -20,6 +24,9 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtService {
 	public static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -55,6 +62,10 @@ public class JwtService {
         Map<String,Object> claims=new HashMap<>();
         String roleName = user.getRole().getRoleName();
         claims.put("roles", roleName);
+        // Fetch employee by username
+         Optional<Employee> empOpt = employeeRepository.findByUserUsername(user.getUsername());
+        empOpt.ifPresent(emp -> claims.put("employeeId", emp.getEmployeeId()));
+
         return createToken(claims, user.getUsername());
     }
     
