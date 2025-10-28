@@ -1,0 +1,26 @@
+.auth-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(246, 251, 250, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 600;
+}
+.auth-card {
+  background: white;
+  padding: 32px 28px 24px 28px;
+  border-radius: 16px;
+  box-shadow: 0 6px 32px rgba(50, 70, 130, 0.15);
+  max-width: 370px;
+  width: 90vw;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+}
+.auth-card h2 { margin-bottom: 24px; text-align: center; }
+.auth-card .form { margin-bottom: 10px; }
+.auth-card mat-form-field { width: 100%; margin-bottom: 18px; }
+.error-message { color: #e53935; margin-top: 4px; text-align: center; }
+.success-message { color: #239f53; margin-top: 4px; text-align: center; }
+.auth-card button { font-weight: 600; }

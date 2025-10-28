@@ -6,6 +6,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { Router, ActivatedRoute } from '@angular/router';
 import { EmployeeService } from '../../services/employee';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { Employee } from '../../models/employee.model';
 
 @Component({
   selector: 'app-employee-form',
@@ -16,6 +18,7 @@ import { EmployeeService } from '../../services/employee';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatCheckboxModule,
   ],
   templateUrl: './employee-form.html',
   styleUrls: ['./employee-form.scss'],
@@ -36,7 +39,10 @@ export class EmployeeFormComponent implements OnInit {
     salary: [0],
     dateOfJoining: [''],
     status: [true],
+    managerId: [''],
+    userId: ['']
   });
+
   editMode = false;
   id?: number;
 
@@ -45,30 +51,37 @@ export class EmployeeFormComponent implements OnInit {
     if (paramId) {
       this.editMode = true;
       this.id = +paramId;
-      this.empService.getEmployee(this.id).subscribe(emp => {
-        if (emp) this.form.patchValue(emp);
+
+      this.empService.getEmployee(this.id).subscribe((emp: Employee) => {
+        if (emp) {
+          // Ensure backward compatibility with older nested models
+          const patchedEmp = {
+            ...emp,
+            managerId: (emp as any).manager?.employeeId || emp.managerId || '',
+            userId: (emp as any).user?.userId || emp.userId || ''
+          };
+          this.form.patchValue(patchedEmp);
+        }
       });
     }
   }
 
   submit() {
-  if (this.form.invalid) return;
-  const rawPayload = this.form.value;
+    if (this.form.invalid) return;
 
-  // Cast to Record<string, any> for safe indexing
-  const payload: Record<string, any> = {};
-  const raw = rawPayload as Record<string, any>;
+    const payload: Employee = {
+      ...this.form.value,
+      employeeId: this.editMode ? this.id : undefined
+    } as Employee;
 
-  Object.keys(raw).forEach(key => {
-    payload[key] = raw[key] === null ? undefined : raw[key];
-  });
-
-  if (this.editMode && this.id) {
-    this.empService.updateEmployee(this.id, payload).subscribe(() => this.router.navigate(['/employees']));
-  } else {
-    this.empService.addEmployee(payload).subscribe(() => this.router.navigate(['/employees']));
+    if (this.editMode) {
+      this.empService.updateEmployee(payload).subscribe(() => {
+        this.router.navigate(['/employees']);
+      });
+    } else {
+      this.empService.addEmployee(payload).subscribe(() => {
+        this.router.navigate(['/employees']);
+      });
+    }
   }
-}
-
-
 }

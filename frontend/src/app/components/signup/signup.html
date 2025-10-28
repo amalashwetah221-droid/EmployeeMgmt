@@ -1,0 +1,28 @@
+<div class="auth-overlay">
+  <div class="auth-card">
+    <h2>Sign Up</h2>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+      <mat-form-field appearance="outline">
+        <mat-label>Username*</mat-label>
+        <input matInput formControlName="username">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Password*</mat-label>
+        <input matInput formControlName="password" type="password">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Email*</mat-label>
+        <input matInput formControlName="email" type="email">
+      </mat-form-field>
+     
+      <button mat-flat-button color="primary" type="submit" style="width:100%;margin-top:10px;">
+        Sign Up
+      </button>
+      <div *ngIf="error" class="error-message">{{ error }}</div>
+      <div *ngIf="message" class="success-message">{{ message }}</div>
+    </form>
+    <button mat-stroked-button color="primary" type="button" (click)="gotoLogin()" style="width:100%;margin-top:10px;">
+      Already have an account? Login
+    </button>
+  </div>
+</div>

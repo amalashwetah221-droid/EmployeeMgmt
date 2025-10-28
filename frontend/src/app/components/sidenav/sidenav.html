@@ -1,7 +1,16 @@
-<aside style="width:220px;padding:16px">
-<nav mat-nav-list>
-<a mat-list-item routerLink="/dashboard" routerLinkActive="active"><mat-icon>dashboard</mat-icon>&nbsp; Dashboard</a>
-<a mat-list-item routerLink="/employees" routerLinkActive="active"><mat-icon>people</mat-icon>&nbsp; Employees</a>
-<a mat-list-item routerLink="/employees/new" routerLinkActive="active"><mat-icon>person_add</mat-icon>&nbsp; Add Employee</a>
-</nav>
+<aside class="sidenav" [ngClass]="{'sidenav-blur': !isAuthenticated}">
+  <nav mat-nav-list>
+    <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+      <mat-icon>dashboard</mat-icon>
+      <span>Dashboard</span>
+    </a>
+    <a *ngIf="canViewEmployees" mat-list-item routerLink="/employees" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+      <mat-icon>people</mat-icon>
+      <span>Employees</span>
+    </a>
+    <a *ngIf="isAdminUser" mat-list-item routerLink="/employees/new" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+      <mat-icon>person_add</mat-icon>
+      <span>Add Employee</span>
+    </a>
+  </nav>
 </aside>

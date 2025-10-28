@@ -9,8 +9,11 @@ import com.example.backend.model.Employee;
 import com.example.backend.repository.EmployeeRepository;
 import com.example.backend.repository.UserRepository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeService {
@@ -114,6 +117,26 @@ public class EmployeeService {
 
     return employeeRepository.findByManager(manager);
 }
+
+public List<Map<String, Object>> getSalaryByDesignation() {
+    return employeeRepository.findAll()
+            .stream()
+            .collect(Collectors.groupingBy(
+                    Employee::getDesignation,
+                    Collectors.averagingDouble(Employee::getSalary)
+            ))
+            .entrySet()
+            .stream()
+            .map(e -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("name", e.getKey());
+                map.put("value", e.getValue());
+                return map;
+            })
+            .collect(Collectors.toList());
+}
+
+
 
 
 }

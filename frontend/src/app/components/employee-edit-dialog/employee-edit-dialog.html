@@ -1,0 +1,52 @@
+<h1 mat-dialog-title>Edit Employee</h1>
+<form [formGroup]="form" (ngSubmit)="onSave()">
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>First Name</mat-label>
+    <input matInput formControlName="firstName" required />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Last Name</mat-label>
+    <input matInput formControlName="lastName" required />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Email</mat-label>
+    <input matInput formControlName="email" type="email" required />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Phone</mat-label>
+    <input matInput formControlName="phone" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Department</mat-label>
+    <input matInput formControlName="department" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Designation</mat-label>
+    <input matInput formControlName="designation" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Salary</mat-label>
+    <input matInput type="number" formControlName="salary" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Date of Joining</mat-label>
+    <input matInput type="date" formControlName="dateOfJoining" />
+  </mat-form-field>
+
+  <mat-checkbox formControlName="status" class="full-width">Active</mat-checkbox>
+
+
+
+  <div mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="dialogRef.close()">Cancel</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">Save</button>
+  </div>
+</form>

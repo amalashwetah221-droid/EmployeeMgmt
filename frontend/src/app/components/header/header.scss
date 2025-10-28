@@ -1,0 +1,28 @@
+.mat-toolbar {
+  flex-wrap: wrap;
+  min-height: 56px;
+  box-sizing: border-box;
+}
+@media (max-width: 600px) {
+  .mat-toolbar {
+    padding: 0 4px;
+    font-size: 0.97rem;
+    min-height: 44px;
+  }
+}
+
+.mat-toolbar {
+  flex-wrap: wrap;
+  min-height: 56px;
+  box-sizing: border-box;
+  width: 100%;
+  overflow-x: auto;
+}
+@media (max-width: 600px) {
+  .mat-toolbar {
+    padding: 0 2px;
+    font-size: 0.97rem;
+    min-height: 44px;
+  }
+}
+

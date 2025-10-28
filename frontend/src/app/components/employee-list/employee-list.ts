@@ -1,8 +1,9 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, inject } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Employee } from '../../models/employee.model';
+import { EmployeeService } from '../../services/employee';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,7 +12,11 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { NgChartsModule } from 'ng2-charts';
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, NgIf } from '@angular/common';
+import { AuthService } from '../../services/auth';
+import { MatDialog } from '@angular/material/dialog';
+import { EmployeeEditDialog } from '../employee-edit-dialog/employee-edit-dialog';
+import { EmployeeViewDialog } from '../employee-view-dialog/employee-view-dialog';
 
 @Component({
   selector: 'app-employee-list',
@@ -27,11 +32,16 @@ import { DecimalPipe } from '@angular/common';
     MatTableModule,
     MatSortModule,
     NgChartsModule,
-     DecimalPipe 
+    DecimalPipe,
+    NgIf
   ],
   providers: [DecimalPipe]
 })
 export class EmployeeList implements OnInit, AfterViewInit {
+  private employeeService = inject(EmployeeService);
+  private authService = inject(AuthService);
+  isAdminUser = false;
+
   displayedColumns: string[] = [
     'employeeId', 'name', 'email', 'department', 'designation', 'salary', 'actions',
   ];
@@ -59,14 +69,17 @@ export class EmployeeList implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   ngOnInit(): void {
-    const employees: Employee[] = [
-      { employeeId: 1, firstName: 'Amit', lastName: 'Patel', email: 'amit@mail.com', department: 'IT', designation: 'Developer', salary: 85000, dateOfJoining: '2023-06-12' },
-      { employeeId: 2, firstName: 'Neha', lastName: 'Singh', email: 'neha@mail.com', department: 'HR', designation: 'Manager', salary: 120000, dateOfJoining: '2022-03-18' },
-      { employeeId: 3, firstName: 'Rahul', lastName: 'Kumar', email: 'rahul@mail.com', department: 'Finance', designation: 'Analyst', salary: 95000, dateOfJoining: '2024-01-10' },
-      { employeeId: 4, firstName: 'Sara', lastName: 'Fernandez', email: 'sara@mail.com', department: 'IT', designation: 'Tester', salary: 70000, dateOfJoining: '2023-09-05' },
-    ];
-    this.dataSource.data = employees;
-    this.updateChart(employees);
+    // Fetch employees based on role via service
+    this.isAdminUser = this.authService.isAdmin();
+    this.employeeService.getEmployees().subscribe({
+      next: (employees) => {
+        this.dataSource.data = employees;
+        this.updateChart(employees);
+      },
+      error: (error) => {
+        console.error('Error fetching employees:', error);
+      }
+    });
   }
 
   ngAfterViewInit(): void {
@@ -105,13 +118,69 @@ export class EmployeeList implements OnInit, AfterViewInit {
     };
   }
 
-  viewEmployee(emp: Employee) {
-    alert(`Viewing ${emp.firstName} ${emp.lastName}`);
-  }
+  private dialog = inject(MatDialog);
   editEmployee(emp: Employee) {
-    alert(`Editing ${emp.firstName} ${emp.lastName}`);
+    const dialogRef = this.dialog.open(EmployeeEditDialog, {
+      width: '400px',
+      data: emp,
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.employeeService.updateEmployee(result).subscribe({
+          next: () => {
+            alert('Employee updated successfully');
+            this.loadEmployees();
+          },
+          error: (err) => alert('Failed to update employee: ' + err.message),
+        });
+      }
+    });
   }
-  deleteEmployee(emp: Employee) {
-    alert(`Deleting ${emp.firstName} ${emp.lastName}`);
+  
+deleteEmployee(emp: Employee) {
+  if (!emp.employeeId) {
+    alert('Employee ID is missing!');
+    return;
+  }
+
+  if (confirm(`Are you sure you want to delete ${emp.firstName} ${emp.lastName}?`)) {
+    this.employeeService.deleteEmployee(emp.employeeId).subscribe({
+      next: () => {
+        alert('Employee deleted successfully');
+        this.loadEmployees();
+      },
+      error: (err) => alert('Failed to delete employee: ' + err.message),
+    });
+  }
+}
+
+  sortAscending() {
+    this.dataSource.data = [...this.dataSource.data].sort((a, b) =>
+      (a.firstName ?? '').localeCompare(b.firstName ?? '')
+    );
+  }
+
+  sortDescending() {
+    this.dataSource.data = [...this.dataSource.data].sort((a, b) =>
+      (b.firstName ?? '').localeCompare(a.firstName ?? '')
+    );
+  }
+  viewEmployee(emp: Employee) {
+    this.dialog.open(EmployeeViewDialog, {
+      width: '400px',
+      data: emp
+    });
+  }
+   loadEmployees() {
+    this.employeeService.getEmployees().subscribe({
+      next: (employees) => {
+        this.dataSource.data = employees;
+        this.updateChart(employees);
+      },
+      error: (error) => {
+        console.error('Error fetching employees:', error);
+      }
+    });
   }
 }
