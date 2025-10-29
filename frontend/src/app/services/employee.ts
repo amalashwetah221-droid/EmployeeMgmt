@@ -3,10 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { Employee } from '../models/employee.model';
 import { AuthService } from './auth';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class EmployeeService {
-  private apiUrl = 'http://localhost:8080/api/employees';
+  private apiUrl = environment.apiBase;
   private auth = inject(AuthService);
   constructor(private http: HttpClient) {}
   addEmployee(emp: Employee): Observable<Employee> { return this.http.post<Employee>(this.apiUrl, emp); }
