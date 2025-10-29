@@ -24,3 +24,16 @@
 .error-message { color: #e53935; margin-top: 4px; text-align: center; }
 .success-message { color: #239f53; margin-top: 4px; text-align: center; }
 .auth-card button { font-weight: 600; }
+.auth-header {
+  width: 100%;
+  text-align: center;
+  font-size: 1.42rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  padding: 18px 0 12px 0;
+  background: linear-gradient(100deg, #14a684 5%, #1bb7aa 43%, #2897db 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(35, 170, 220, 0.12);
+}
