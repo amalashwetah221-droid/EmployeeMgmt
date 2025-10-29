@@ -5,8 +5,8 @@ pipeline {
         REGION = 'ap-south-1'
         EC2_INSTANCE = 'ubuntu@13.201.77.117'
         DOCKER_REGISTRY = 'docker.io/amala221'
-        DOCKER_IMAGE_BACKEND = 'amala221/backend-GU'
-        DOCKER_IMAGE_FRONTEND = 'amala221/frontend-GU'
+        DOCKER_IMAGE_BACKEND = 'amala221/backend-gu'
+        DOCKER_IMAGE_FRONTEND = 'amala221/frontend-gu'
         FRONTEND_DIR = 'frontend'
         BACKEND_DIR = 'backend'
     }
