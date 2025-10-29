@@ -2,24 +2,22 @@ version: '3.8'
 
 services:
   backend:
-    image: docker.io/amala221/backend-gu:latest
-    container_name: backend
+    image: amala221/backend-gu:latest   
     ports:
       - "8080:8080"
+    networks:
+      - app-network
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-    networks:
-      - app-network
 
   frontend:
-    image: docker.io/amala221/frontend-gu:latest
-    container_name: frontend
+    image: amala221/frontend-gu:latest  
     ports:
       - "80:80"
-    depends_on:
-      - backend
     networks:
       - app-network
+    depends_on:
+      - backend
 
 networks:
   app-network:
