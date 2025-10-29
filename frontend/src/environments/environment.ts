@@ -1,4 +1,4 @@
 export const environment = {
-production: true,
+production: false,
 apiBase: 'http://13.201.77.117:8080/api'
 };

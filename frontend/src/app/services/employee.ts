@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class EmployeeService {
-  private apiUrl = environment.apiBase;
+  private apiUrl = `${environment.apiBase}/employees`;
   private auth = inject(AuthService);
   constructor(private http: HttpClient) {}
   addEmployee(emp: Employee): Observable<Employee> { return this.http.post<Employee>(this.apiUrl, emp); }
