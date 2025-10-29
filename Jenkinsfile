@@ -41,6 +41,9 @@ pipeline {
                         npm cache clean --force
                         npm install --legacy-peer-deps
                         npm run build --if-present
+                        npm run build --if-present
+                        ls -R dist || true
+
                     '''
                 }
             }
