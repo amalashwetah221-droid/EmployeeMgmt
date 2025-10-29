@@ -13,6 +13,7 @@ public class WebConfig {
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.addAllowedOrigin("http://localhost:4200");
+        corsConfiguration.addAllowedOrigin("http://13.201.77.117");
         corsConfiguration.addAllowedMethod("*");
        corsConfiguration.addAllowedHeader("*"); 
        corsConfiguration.setAllowCredentials(false);
