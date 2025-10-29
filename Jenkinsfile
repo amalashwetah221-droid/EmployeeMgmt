@@ -28,14 +28,21 @@ pipeline {
         }
 
 
-        stage('Build Frontend') {
+       stage('Build Frontend') {
             steps {
                 dir(FRONTEND_DIR) {
-                    sh 'npm install'
-                    sh 'ng build --prod'
+                    script {
+                        sh '''
+                            npm config set fetch-retry-maxtimeout 120000
+                            npm config set fetch-timeout 120000
+                            npm install
+                            npm run build --if-present
+                        '''
+                    }
                 }
             }
         }
+
 
         stage('Dockerize and Push') {
             steps {
