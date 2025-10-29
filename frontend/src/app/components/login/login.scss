@@ -43,3 +43,19 @@
 .auth-card input {
   padding-left: 10px;
 }
+
+.auth-main-btn {
+  width: 100%;
+  margin-top: 10px;
+  font-weight: 600;
+  font-size: 1.11rem;
+  
+  box-shadow: 0 2px 12px rgba(18, 179, 141, 0.10);
+  transition: background 0.25s, color 0.17s, box-shadow 0.22s;
+
+  &:hover, &:focus {
+    background: linear-gradient(95deg, #18ca99 5%, #1696c7 100%);
+    color: #fff !important;
+    box-shadow: 0 4px 20px rgba(30, 167, 222, 0.15);
+  }
+}

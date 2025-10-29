@@ -16,9 +16,10 @@
         <input matInput formControlName="email" type="email">
       </mat-form-field>
      
-      <button mat-flat-button color="primary" type="submit" style="width:100%;margin-top:10px;">
+      <button mat-stroked-button  color="primary" type="submit" class="auth-main-btn" style="width:100%;margin-top:10px;">
         Sign Up
       </button>
+
       <div *ngIf="error" class="error-message">{{ error }}</div>
       <div *ngIf="message" class="success-message">{{ message }}</div>
     </form>

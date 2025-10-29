@@ -18,37 +18,33 @@ pipeline {
             }
         }
 
-        stage('Build Backend') {
-        tools { maven 'M3' } 
-        steps {
-            dir(BACKEND_DIR) {
-                sh 'mvn clean install -DskipTests=true'
-                // Check if the JAR file exists
-                sh 'ls -l target/'
-            }
-        }
-    }
-
-
-
-       stage('Build Frontend') {
-         tools { nodejs 'Node20' }
+        stage('Build Backend JAR') {
+            tools { maven 'M3' }
             steps {
-                dir(FRONTEND_DIR) {
-                    script {
-                        sh '''
-                            npm config set fetch-retry-maxtimeout 120000
-                            npm config set fetch-timeout 120000
-                            rm -rf node_modules package-lock.json
-                            npm cache clean --force
-                            npm install --legacy-peer-deps
-                            npm run build --if-present
-                        '''
-                    }
+                dir(BACKEND_DIR) {
+                    echo "🧱 Building backend JAR..."
+                    sh 'mvn clean package -DskipTests'
+                    sh 'ls -lh target/'
                 }
             }
         }
 
+        stage('Build Frontend') {
+            tools { nodejs 'Node20' }
+            steps {
+                dir(FRONTEND_DIR) {
+                    echo "Building frontend..."
+                    sh '''
+                        npm config set fetch-retry-maxtimeout 120000
+                        npm config set fetch-timeout 120000
+                        rm -rf node_modules package-lock.json
+                        npm cache clean --force
+                        npm install --legacy-peer-deps
+                        npm run build --if-present
+                    '''
+                }
+            }
+        }
 
         stage('Dockerize and Push') {
             steps {
@@ -58,17 +54,25 @@ pipeline {
                     passwordVariable: 'AWS_SECRET_ACCESS_KEY'
                 )]) {
                     script {
+                        echo "🐳 Building and pushing Docker images..."
+
+                        //  Build backend Docker image (ensure Dockerfile path and context are correct)
                         sh '''
                             echo "Building backend Docker image..."
-                            docker build -t ${DOCKER_IMAGE_BACKEND} ./backend
+                            docker build -t ${DOCKER_IMAGE_BACKEND}:latest -f ${BACKEND_DIR}/Dockerfile ${BACKEND_DIR}
+                        '''
 
+                        // Build frontend Docker image
+                        sh '''
                             echo "Building frontend Docker image..."
-                            docker build -t ${DOCKER_IMAGE_FRONTEND} ./frontend
-                            
+                            docker build -t ${DOCKER_IMAGE_FRONTEND}:latest -f ${FRONTEND_DIR}/Dockerfile ${FRONTEND_DIR}
+                        '''
+
+                        // Push both images
+                        sh '''
                             echo "Pushing images to Docker Hub..."
                             docker push ${DOCKER_IMAGE_BACKEND}:latest
                             docker push ${DOCKER_IMAGE_FRONTEND}:latest
-
                         '''
                     }
                 }
@@ -97,10 +101,10 @@ pipeline {
             sh 'docker system prune -f || true'
         }
         success {
-            echo "Deployment succeeded!"
+            echo "✅ Deployment succeeded!"
         }
         failure {
-            echo "Deployment failed — check logs above."
+            echo "❌ Deployment failed — check logs above."
         }
     }
 }
