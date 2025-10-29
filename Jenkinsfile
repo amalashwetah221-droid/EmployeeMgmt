@@ -76,13 +76,15 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                 sshagent(['ec2-ssh-key']) {
-                  ssh -o StrictHostKeyChecking=no ${EC2_INSTANCE} bash -c "'
-                                                    cd /home/ubuntu/EmployeeMgmt
-                                                    docker-compose down
-                                                    docker-compose pull
-                                                    docker-compose up -d
-                                                    '"
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${EC2_INSTANCE} bash -c "'
+                        cd /home/ubuntu/EmployeeMgmt
+                        docker-compose down
+                        docker-compose pull
+                        docker-compose up -d
+                        '"
 
+                    """
                 }
             }
         }
