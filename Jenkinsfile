@@ -36,7 +36,9 @@ pipeline {
                         sh '''
                             npm config set fetch-retry-maxtimeout 120000
                             npm config set fetch-timeout 120000
-                            npm install
+                            rm -rf node_modules package-lock.json
+                            npm cache clean --force
+                            npm install --legacy-peer-deps
                             npm run build --if-present
                         '''
                     }
