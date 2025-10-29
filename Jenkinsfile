@@ -37,16 +37,25 @@ pipeline {
 
         stage('Dockerize and Push') {
             steps {
-                // ✅ Bind username and password to AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
-                withCredentials([usernamePassword(credentialsId: 'aws-access-key-id', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                    sh '''
-                        echo "AWS key ID: $AWS_ACCESS_KEY_ID"
-                        echo "Building and pushing Docker images..."
-                        docker build -t ${DOCKER_IMAGE_BACKEND} ./backend
-                        docker build -t ${DOCKER_IMAGE_FRONTEND} ./frontend
-                        docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BACKEND}
-                        docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_FRONTEND}
-                    '''
+                // ✅ Bind AWS credentials (username = access key ID, password = secret key)
+                withCredentials([usernamePassword(
+                    credentialsId: 'aws-access-key-id',
+                    usernameVariable: 'AWS_ACCESS_KEY_ID',
+                    passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                )]) {
+                    script {
+                        sh '''
+                            echo "Building backend Docker image..."
+                            docker build -t ${DOCKER_IMAGE_BACKEND} ./backend
+
+                            echo "Building frontend Docker image..."
+                            docker build -t ${DOCKER_IMAGE_FRONTEND} ./frontend
+
+                            echo "Pushing images to Docker Hub..."
+                            docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BACKEND}
+                            docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_FRONTEND}
+                        '''
+                    }
                 }
             }
         }
@@ -69,16 +78,14 @@ pipeline {
 
     post {
         always {
-            node {
-                echo "Cleaning up local Docker resources..."
-                sh 'docker system prune -f || true'
-            }
+            echo "🧹 Cleaning up local Docker images to save space..."
+            sh 'docker system prune -f || true'
         }
         success {
-            echo " Deployment succeeded!"
+            echo "✅ Deployment succeeded!"
         }
         failure {
-            echo "Deployment failed. Check the logs above."
+            echo "❌ Deployment failed — check logs above."
         }
     }
 }
