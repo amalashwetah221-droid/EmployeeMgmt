@@ -12,7 +12,8 @@ RUN npm run build --prod
 
 # --- Stage 2: Serve via NGINX ---
 FROM nginx:stable-alpine
-COPY --from=build /app/dist/frontend /usr/share/nginx/html
+COPY --from=build /app/dist/frontend/browser /usr/share/nginx/html
+
 
 # Expose port 80
 EXPOSE 80
