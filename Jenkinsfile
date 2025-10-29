@@ -18,14 +18,15 @@ pipeline {
             }
         }
 
-
         stage('Build Backend') {
+            tools { maven 'M3' } 
             steps {
                 dir(BACKEND_DIR) {
                     sh 'mvn clean install -DskipTests=true'
                 }
             }
         }
+
 
         stage('Build Frontend') {
             steps {
