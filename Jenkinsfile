@@ -14,9 +14,10 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git "https://github.com/amalashwetah221-droid/EmployeeMgmt.git"
+                git branch: 'main', url: 'https://github.com/amalashwetah221-droid/EmployeeMgmt.git'
             }
         }
+
 
         stage('Build Backend') {
             steps {
@@ -37,7 +38,6 @@ pipeline {
 
         stage('Dockerize and Push') {
             steps {
-                // ✅ Bind AWS credentials (username = access key ID, password = secret key)
                 withCredentials([usernamePassword(
                     credentialsId: 'aws-access-key-id',
                     usernameVariable: 'AWS_ACCESS_KEY_ID',
@@ -82,10 +82,10 @@ pipeline {
             sh 'docker system prune -f || true'
         }
         success {
-            echo "✅ Deployment succeeded!"
+            echo "Deployment succeeded!"
         }
         failure {
-            echo "❌ Deployment failed — check logs above."
+            echo "Deployment failed — check logs above."
         }
     }
 }
