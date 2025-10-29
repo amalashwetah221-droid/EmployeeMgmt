@@ -18,13 +18,13 @@ pipeline {
             }
         }
 
-        stage('Build Backend JAR') {
-            tools { maven 'M3' }
+        stage('Build Backend (Dockerized)') {
             steps {
-                dir(BACKEND_DIR) {
-                    echo "🧱 Building backend JAR..."
-                    sh 'mvn clean package -DskipTests'
-                    sh 'ls -lh target/'
+                script {
+                    echo "🧱 Building backend inside Docker (Maven multi-stage build)..."
+                    sh '''
+                        docker build -t ${DOCKER_IMAGE_BACKEND}:latest -f ${BACKEND_DIR}/Dockerfile ${BACKEND_DIR}
+                    '''
                 }
             }
         }
@@ -33,7 +33,7 @@ pipeline {
             tools { nodejs 'Node20' }
             steps {
                 dir(FRONTEND_DIR) {
-                    echo "Building frontend..."
+                    echo "🧩 Building frontend..."
                     sh '''
                         npm config set fetch-retry-maxtimeout 120000
                         npm config set fetch-timeout 120000
@@ -46,7 +46,7 @@ pipeline {
             }
         }
 
-        stage('Dockerize and Push') {
+        stage('Dockerize Frontend and Push Images') {
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'aws-access-key-id',
@@ -56,12 +56,6 @@ pipeline {
                     script {
                         echo "🐳 Building and pushing Docker images..."
 
-                        //  Build backend Docker image (ensure Dockerfile path and context are correct)
-                        sh '''
-                            echo "Building backend Docker image..."
-                            docker build -t ${DOCKER_IMAGE_BACKEND}:latest -f ${BACKEND_DIR}/Dockerfile ${BACKEND_DIR}
-                        '''
-
                         // Build frontend Docker image
                         sh '''
                             echo "Building frontend Docker image..."
@@ -70,7 +64,7 @@ pipeline {
 
                         // Push both images
                         sh '''
-                            echo "Pushing images to Docker Hub..."
+                            echo "🔼 Pushing images to Docker Hub..."
                             docker push ${DOCKER_IMAGE_BACKEND}:latest
                             docker push ${DOCKER_IMAGE_FRONTEND}:latest
                         '''
