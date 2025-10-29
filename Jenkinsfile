@@ -64,10 +64,11 @@ pipeline {
 
                             echo "Building frontend Docker image..."
                             docker build -t ${DOCKER_IMAGE_FRONTEND} ./frontend
-
+                            
                             echo "Pushing images to Docker Hub..."
-                            docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BACKEND}
-                            docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_FRONTEND}
+                            docker push ${DOCKER_IMAGE_BACKEND}:latest
+                            docker push ${DOCKER_IMAGE_FRONTEND}:latest
+
                         '''
                     }
                 }
