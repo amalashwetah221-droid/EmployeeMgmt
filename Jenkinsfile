@@ -74,11 +74,11 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                 script {
-                    
+                    // SSH into EC2 and run Docker Compose to deploy the app
                     sshagent(['ec2-ssh-key']) {
                         sh """
                             ssh -o StrictHostKeyChecking=no ${EC2_INSTANCE} << 'EOF'
-                            cd /home/ubuntu/EmployeeMgmt  // Ensure this path points to your project on EC2
+                            cd /home/ubuntu/EmployeeMgmt  // Path where your repo is cloned on EC2
                             docker-compose down   # Stop any running containers
                             docker-compose pull   # Pull the latest Docker images
                             docker-compose up -d  # Start the containers in detached mode
@@ -92,6 +92,7 @@ pipeline {
 
     post {
         always {
+            // Clean up Docker images to save space
             sh 'docker system prune -f'
         }
     }
