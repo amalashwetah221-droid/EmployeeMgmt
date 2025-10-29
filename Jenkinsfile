@@ -29,6 +29,7 @@ pipeline {
 
 
        stage('Build Frontend') {
+         tools { nodejs 'Node20' }
             steps {
                 dir(FRONTEND_DIR) {
                     script {
