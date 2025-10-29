@@ -1,4 +1,4 @@
-pipeline {
+pipeline { 
     agent any
 
     environment {
@@ -24,7 +24,6 @@ pipeline {
             steps {
                 dir(BACKEND_DIR) {
                     script {
-                        // Build the backend Spring Boot application
                         sh 'mvn clean install -DskipTests=true'
                     }
                 }
@@ -35,7 +34,6 @@ pipeline {
             steps {
                 dir(FRONTEND_DIR) {
                     script {
-                        // Install frontend dependencies and build Angular app
                         sh 'npm install'
                         sh 'ng build --prod'
                     }
@@ -46,7 +44,6 @@ pipeline {
         stage('Dockerize Backend') {
             steps {
                 script {
-                    // Build the backend Docker image
                     sh 'docker build -t ${DOCKER_IMAGE_BACKEND} ./backend'
                 }
             }
@@ -55,7 +52,6 @@ pipeline {
         stage('Dockerize Frontend') {
             steps {
                 script {
-                    // Build the frontend Docker image
                     sh 'docker build -t ${DOCKER_IMAGE_FRONTEND} ./frontend'
                 }
             }
@@ -64,7 +60,6 @@ pipeline {
         stage('Push Docker Images') {
             steps {
                 script {
-                    // Push Docker images to Docker Hub or AWS ECR
                     sh 'docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_BACKEND}'
                     sh 'docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE_FRONTEND}'
                 }
@@ -74,14 +69,13 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                 script {
-                    // SSH into EC2 and run Docker Compose to deploy the app
                     sshagent(['ec2-ssh-key']) {
                         sh """
                             ssh -o StrictHostKeyChecking=no ${EC2_INSTANCE} << 'EOF'
-                            cd /home/ubuntu/EmployeeMgmt  // Path where your repo is cloned on EC2
-                            docker-compose down   # Stop any running containers
-                            docker-compose pull   # Pull the latest Docker images
-                            docker-compose up -d  # Start the containers in detached mode
+                            cd /home/ubuntu/EmployeeMgmt
+                            docker-compose down
+                            docker-compose pull
+                            docker-compose up -d
                             EOF
                         """
                     }
@@ -92,8 +86,18 @@ pipeline {
 
     post {
         always {
-            // Clean up Docker images to save space
-            sh 'docker system prune -f'
+            script {
+                node {
+                    echo "Cleaning up local Docker resources..."
+                    sh 'docker system prune -f || true'
+                }
+            }
+        }
+        success {
+            echo "Deployment succeeded!"
+        }
+        failure {
+            echo " Deployment failed. Check the logs above."
         }
     }
 }
